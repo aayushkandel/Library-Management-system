@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Issued Books{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="mb-0"><i class="fas fa-bookmark"></i> All Issued Books</h4>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+            <div class="card-body">
+                {% if issued_data %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Book Serial</th>
+                                    <th>Book Title</th>
+                                    <th>Author</th>
+                                    <th>Subject</th>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Branch</th>
+                                    <th>Issue Date</th>
+                                    <th>Return Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in issued_data %}
+                                <tr>
+                                    <td><strong>{{ item.issue.serial }}</strong></td>
+                                    <td>
+                                        {% if item.book %}
+                                            {{ item.book.title }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.book %}
+                                            {{ item.book.author }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.book %}
+                                            <span class="badge bg-info">{{ item.book.subject }}</span>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td><strong>{{ item.issue.stdid }}</strong></td>
+                                    <td>
+                                        {% if item.student %}
+                                            {{ item.student.username }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if item.student %}
+                                            {{ item.student.branch }}
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ item.issue.issue }}</td>
+                                    <td>{{ item.issue.exp }}</td>
+                                    <td>
+                                        {% now "Y-m-d" as today %}
+                                        {% if item.issue.exp|date:"Y-m-d" < today %}
+                                            <span class="badge bg-danger">Overdue</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-3">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> 
+                            Total issued books: <strong>{{ issued_data|length }}</strong>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox text-muted" style="font-size: 3rem;"></i>
+                        <p class="mt-3 text-muted">No books are currently issued</p>
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
